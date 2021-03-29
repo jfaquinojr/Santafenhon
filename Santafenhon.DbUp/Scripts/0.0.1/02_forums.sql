@@ -1,0 +1,47 @@
+﻿CREATE TABLE ForumCategories (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Name TEXT(100) NOT NULL,
+	Description TEXT(500),
+	CreatedOn TEXT(50) NOT NULL,
+	CreatedBy TEXT,
+	RowGuid TEXT(40) NOT NULL,
+	Status TEXT(30)
+);
+
+CREATE TABLE ForumSubategories (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Name TEXT(100) NOT NULL,
+	Description TEXT(500),
+	CreatedOn TEXT(50) NOT NULL,
+	CreatedBy TEXT,
+	RowGuid TEXT(40) NOT NULL,
+	Status TEXT(30),
+	ParentId INTEGER
+);
+
+
+CREATE TABLE ForumTopics (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Title TEXT(100) NOT NULL,
+	Summary TEXT(500),
+	CreatedOn TEXT(50) NOT NULL,
+	CreatedBy TEXT,
+	RowGuid TEXT(40) NOT NULL,
+	Upvotes INTEGER,
+	Downvotes INTEGER,
+	Status TEXT(30),
+	SubCategoryId INTEGER
+);
+
+
+CREATE TABLE ForumPosts (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	TopicId INTEGER NOT NULL,
+	CreatedOn TEXT(50) NOT NULL,
+	CreatedBy TEXT,
+	RowGuid TEXT(40) NOT NULL,
+	Upvotes INTEGER,
+	Downvotes INTEGER
+);
+
+
