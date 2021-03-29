@@ -7,6 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Santafenhon.Web", "Santafen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Santafenhon.DbUp", "Santafenhon.DbUp\Santafenhon.DbUp.csproj", "{EEE0C249-0C17-42D3-9606-82600100E183}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{741581D4-DD13-4E67-9470-7D9E8BC16288}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{01F1ABF6-D66E-4468-AC58-A741BDF5F10B}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +32,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{37C91938-341C-43E7-8F48-F9042B7346C3} = {741581D4-DD13-4E67-9470-7D9E8BC16288}
+		{EEE0C249-0C17-42D3-9606-82600100E183} = {741581D4-DD13-4E67-9470-7D9E8BC16288}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8D834CBC-BFCC-4964-9A0C-8B86B16FE5B8}
