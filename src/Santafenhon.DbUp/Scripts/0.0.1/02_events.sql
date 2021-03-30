@@ -1,0 +1,11 @@
+﻿
+CREATE TABLE EventLogs (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	StreamId INT NOT NULL,
+	EventType TEXT(50) NOT NULL,
+	LogDateTime TEXT(50) NOT NULL,
+	PayLoad TEXT
+);
+
+
+

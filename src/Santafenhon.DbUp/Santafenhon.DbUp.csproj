@@ -8,8 +8,9 @@
   <ItemGroup>
     <None Remove="appsettings.Development.json" />
     <None Remove="appsettings.json" />
-    <None Remove="Scripts\0.0.1\01_initial.sql" />
-    <None Remove="Scripts\0.0.1\02_forums.sql" />
+    <None Remove="Scripts\0.0.1\01_identity.sql" />
+    <None Remove="Scripts\0.0.1\02_events.sql" />
+    <None Remove="Scripts\0.0.1\03_forums.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,8 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\0.0.1\02_forums.sql" />
-    <EmbeddedResource Include="Scripts\0.0.1\01_initial.sql" />
+    <EmbeddedResource Include="Scripts\0.0.1\02_events.sql" />
+    <EmbeddedResource Include="Scripts\0.0.1\03_forums.sql" />
+    <EmbeddedResource Include="Scripts\0.0.1\01_identity.sql" />
   </ItemGroup>
 
   <ItemGroup>

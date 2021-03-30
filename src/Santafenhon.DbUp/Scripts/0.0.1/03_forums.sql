@@ -8,7 +8,7 @@
 	Status TEXT(30)
 );
 
-CREATE TABLE ForumSubategories (
+CREATE TABLE ForumSubcategories (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	Name TEXT(100) NOT NULL,
 	Description TEXT(500),
@@ -16,6 +16,7 @@ CREATE TABLE ForumSubategories (
 	CreatedBy TEXT,
 	RowGuid TEXT(40) NOT NULL,
 	Status TEXT(30),
+	CategoryId INTEGER NOT NULL,
 	ParentId INTEGER
 );
 
@@ -41,7 +42,18 @@ CREATE TABLE ForumPosts (
 	CreatedBy TEXT,
 	RowGuid TEXT(40) NOT NULL,
 	Upvotes INTEGER,
-	Downvotes INTEGER
+	Downvotes INTEGER,
+	LastModifiedOn TEXT(50),
+	Message TEXT
+);
+
+
+
+CREATE TABLE ForumPinnedTopics (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	TopicId INTEGER NOT NULL,
+	PinnedOn TEXT(50) NOT NULL,
+	PinnedBy TEXT
 );
 
 
