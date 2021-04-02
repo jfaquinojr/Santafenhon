@@ -1,0 +1,88 @@
+﻿@page
+@model SinglePostWithComments<StandardPost>
+@{
+    ViewData["Title"] = !string.IsNullOrEmpty(Model.Data.MetaTitle) ? Model.Data.MetaTitle : Model.Data.Title;
+    var hasImage = Model.Data.PrimaryImage.HasValue;
+    var archive = await WebApp.Api.Pages.GetByIdAsync(Model.Data.BlogId);
+}
+@section head {
+    @WebApp.MetaTags(Model.Data)
+}
+
+<header @(hasImage ? "class=has-image" : "") @(hasImage ? $"style=background-image:url({ @Url.Content(WebApp.Media.ResizeImage(Model.Data.PrimaryImage, 1920, 400)) })" : "")>
+    <div class="dimmer"></div>
+    <div class="container text-center">
+        <h1>@Model.Data.Title</h1>
+        <p class="post-meta">
+            <span>
+                In <a href="@archive.Permalink/category/@Model.Data.Category.Slug">@Model.Data.Category.Title</a>
+            </span>
+            <span>
+                Tags
+                @foreach (var tag in Model.Data.Tags)
+                {
+                    <a href="@archive.Permalink/tag/@tag.Slug">#@tag.Slug</a>
+                }
+            </span>
+            @if (Model.Data.IsPublished)
+            {
+                <span>
+                    Published @Model.Data.Published.Value.ToShortDateString()
+                </span>
+            }
+            @if (Model.Data.EnableComments && Model.Data.CommentCount > 0)
+            {
+                <span>
+                    <a href="#comments">@Model.Data.CommentCount @(Model.Data.CommentCount == 1 ? "comment" : "comments")</a>
+                </span>
+            }
+        </p>
+        @if (!string.IsNullOrWhiteSpace(Model.Data.Excerpt))
+        {
+            <div class="row justify-content-center">
+                <div class="col-lg-8 lead">
+                    @Html.Raw(Model.Data.Excerpt)
+                </div>
+            </div>
+        }
+    </div>
+</header>
+
+<main>
+    @foreach (var block in Model.Data.Blocks)
+    {
+        <div class="block @block.CssName()">
+            <div class="container">
+                @Html.DisplayFor(m => block, block.GetType().Name)
+            </div>
+        </div>
+    }
+    @if (Model.Data.EnableComments)
+    {
+<div id="comments" class="container comments">
+
+
+    <div id="disqus_thread"></div>
+    <script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://pinoydevs.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+</div>
+    }
+</main>
