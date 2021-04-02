@@ -7,7 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Piranha;
+using Piranha.AspNetCore.Identity;
+using Piranha.AspNetCore.Identity.SQLite;
+using Piranha.AttributeBuilder;
+using Piranha.Data.EF.SQLite;
+using Piranha.Manager.Editor;
 using Santafenhon.Web.Data;
+using Santafenhon.Web.Shared.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,10 +34,26 @@ namespace Santafenhon.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddPiranha(options =>
+            {
+                options.AddRazorRuntimeCompilation = true;
+                options.LoginUrl = "/Identity/Account/Login";
+
+                options.UseFileStorage(naming: Piranha.Local.FileStorageNaming.UniqueFolderNames);
+                options.UseImageSharp();
+                options.UseManager();
+                options.UseTinyMCE();
+                options.UseMemoryCache();
+                options.UseEF<SQLiteDb>(db =>
+                    db.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            });
+
+            services.AddScoped<Piranha.ISecurity, BgrySecurity>();
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options =>
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                     options.Password.RequireDigit = false;
@@ -40,7 +63,16 @@ namespace Santafenhon.Web
                     options.Password.RequireUppercase = false;
                     options.User.RequireUniqueEmail = true;
                 })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders()
+                ;
+            services.ConfigureApplicationCookie(options =>
+                {
+                    options.LoginPath = "/Identity/Account/Login";
+                });
+            services.AddScoped<ISecurity, BgrySecurity>();
+
             var blder = services.AddRazorPages();
 #if DEBUG
             blder.AddRazorRuntimeCompilation();
@@ -48,7 +80,7 @@ namespace Santafenhon.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApi api, UserManager<IdentityUser> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -62,19 +94,32 @@ namespace Santafenhon.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            // Initialize Piranha
+            App.Init(api);
 
-            app.UseRouting();
+            // Build content types
+            new ContentTypeBuilder(api)
+                .AddAssembly(typeof(Startup).Assembly)
+                .Build()
+                .DeleteOrphans();
+
+            // Configure Tiny MCE
+            EditorConfig.FromFile("editorconfig.json");
+
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapRazorPages();
+            // Middleware setup
+            app.UsePiranha(options => {
+                options.UseManager();
+                options.UseTinyMCE();
             });
+
+
+            // seed data
+            SeedData.Initialize(app.ApplicationServices);
+
         }
     }
 }
