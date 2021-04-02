@@ -11,7 +11,6 @@
     <None Remove="Scripts\0.0.1\01_identity.sql" />
     <None Remove="Scripts\0.0.1\02_events.sql" />
     <None Remove="Scripts\0.0.1\03_forums.sql" />
-    <None Remove="Scripts\0.0.1\04_seeddata.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,13 +28,14 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Scripts\0.0.1\02_events.sql" />
-    <EmbeddedResource Include="Scripts\0.0.1\04_seeddata.sql" />
     <EmbeddedResource Include="Scripts\0.0.1\03_forums.sql" />
     <EmbeddedResource Include="Scripts\0.0.1\01_identity.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="dbup-sqlite" Version="4.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.13" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.13" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.13" />
   </ItemGroup>
