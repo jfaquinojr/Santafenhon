@@ -7,6 +7,11 @@
     <link href="~/lib/bootstrap/cosmo/bootstrap.min.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
     @RenderSection("Head", required: false)
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -21,13 +26,13 @@
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Index">Officials</a>
+                            <a class="nav-link" href="#team">Officials</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Privacy">Accomplishments</a>
+                            <a class="nav-link" href="#portfolio">Accomplishments</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Privacy">Feedback</a>
+                            <a class="nav-link" href="#contact">Feedback</a>
                         </li>
                     </ul>
                 </div>
