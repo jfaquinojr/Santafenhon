@@ -1,0 +1,59 @@
+﻿CREATE TABLE ForumCategories (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Name TEXT(100) NOT NULL,
+	Description TEXT(500),
+	CreatedOn TEXT(50) NOT NULL,
+	CreatedBy TEXT,
+	RowGuid TEXT(40) NOT NULL,
+	Status TEXT(30)
+);
+
+CREATE TABLE ForumSubcategories (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Name TEXT(100) NOT NULL,
+	Description TEXT(500),
+	CreatedOn TEXT(50) NOT NULL,
+	CreatedBy TEXT,
+	RowGuid TEXT(40) NOT NULL,
+	Status TEXT(30),
+	CategoryId INTEGER NOT NULL,
+	ParentId INTEGER
+);
+
+
+CREATE TABLE ForumTopics (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Title TEXT(100) NOT NULL,
+	Summary TEXT(500),
+	CreatedOn TEXT(50) NOT NULL,
+	CreatedBy TEXT,
+	RowGuid TEXT(40) NOT NULL,
+	Upvotes INTEGER,
+	Downvotes INTEGER,
+	Status TEXT(30),
+	SubCategoryId INTEGER
+);
+
+
+CREATE TABLE ForumPosts (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	TopicId INTEGER NOT NULL,
+	CreatedOn TEXT(50) NOT NULL,
+	CreatedBy TEXT,
+	RowGuid TEXT(40) NOT NULL,
+	Upvotes INTEGER,
+	Downvotes INTEGER,
+	LastModifiedOn TEXT(50),
+	Message TEXT
+);
+
+
+
+CREATE TABLE ForumPinnedTopics (
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	TopicId INTEGER NOT NULL,
+	PinnedOn TEXT(50) NOT NULL,
+	PinnedBy TEXT
+);
+
+
