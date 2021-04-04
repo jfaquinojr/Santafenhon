@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Piranha;
+using Serilog.Core;
+using Serilog;
 
 namespace Santafenhon.Web.Shared.Identity
 {
@@ -14,73 +16,81 @@ namespace Santafenhon.Web.Shared.Identity
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            var serviceScopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
-            using var scope = serviceScopeFactory.CreateScope();
-
-            var db = (ApplicationDbContext)scope.ServiceProvider.GetService(typeof(ApplicationDbContext));
-            if(db.Users.Count() > 0)
+            try
             {
-                return; // no need to seed
-            }
+                var serviceScopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
+                using var scope = serviceScopeFactory.CreateScope();
 
-            string[] roles = new string[] { "SysAdmin", "Superuser", "Webuser" };
-
-            var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
-            foreach (string rn in roles)
-            {
-                if (!db.Roles.Any(r => r.Name == rn))
+                var db = (ApplicationDbContext)scope.ServiceProvider.GetService(typeof(ApplicationDbContext));
+                if (db.Users.Count() > 0)
                 {
-                    var result = roleManager.CreateAsync(new IdentityRole(rn)).Result;
+                    return; // no need to seed
                 }
-            }
 
-            var user = new IdentityUser
-            {
-                Email = "jfaquinojr@gmail.com",
-                NormalizedEmail = "JFAQUINOJR@GMAIL.COM",
-                UserName = "jfaquinojr@gmail.com",
-                NormalizedUserName = "JFAQUINOJR@GMAIL.COM",
-                PhoneNumber = "+111111111111",
-                EmailConfirmed = true,
-                PhoneNumberConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString("D")
-            };
+                string[] roles = new string[] { "SysAdmin", "Superuser", "Webuser" };
 
-
-            if (!db.Users.Any(u => u.UserName == user.UserName))
-            {
-                var password = new PasswordHasher<IdentityUser>();
-                var hashed = password.HashPassword(user, "asdf1234");
-                user.PasswordHash = hashed;
-
-                var userStore = new UserStore<IdentityUser>(db);
-                var result = userStore.CreateAsync(user).Result;
-            }
-
-            var _userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-            var result2 = AssignRoles(_userManager, user.Email, roles).Result;
-
-
-
-            // Make sure our SysAdmin role has all of the available claims
-            var role = db.Roles.FirstOrDefault(r => r.NormalizedName == "SYSADMIN");
-            //foreach (var claim in Piranha.Security.Permission.All())
-            foreach (var permission in App.Permissions.GetPermissions())
-            {
-                var roleClaim = db.RoleClaims.FirstOrDefault(c =>
-                    c.RoleId == role.Id && c.ClaimType == permission.Name && c.ClaimValue == permission.Name);
-                if (roleClaim == null)
+                var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+                foreach (string rn in roles)
                 {
-                    db.RoleClaims.Add(new IdentityRoleClaim<string>
+                    if (!db.Roles.Any(r => r.Name == rn))
                     {
-                        RoleId = role.Id,
-                        ClaimType = permission.Name,
-                        ClaimValue = permission.Name
-                    });
+                        var result = roleManager.CreateAsync(new IdentityRole(rn)).Result;
+                    }
                 }
+
+                var user = new IdentityUser
+                {
+                    Email = "jfaquinojr@gmail.com",
+                    NormalizedEmail = "JFAQUINOJR@GMAIL.COM",
+                    UserName = "jfaquinojr@gmail.com",
+                    NormalizedUserName = "JFAQUINOJR@GMAIL.COM",
+                    PhoneNumber = "+111111111111",
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = true,
+                    SecurityStamp = Guid.NewGuid().ToString("D")
+                };
+
+
+                if (!db.Users.Any(u => u.UserName == user.UserName))
+                {
+                    var password = new PasswordHasher<IdentityUser>();
+                    var hashed = password.HashPassword(user, "asdf1234");
+                    user.PasswordHash = hashed;
+
+                    var userStore = new UserStore<IdentityUser>(db);
+                    var result = userStore.CreateAsync(user).Result;
+                }
+
+                var _userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser>>();
+                var result2 = AssignRoles(_userManager, user.Email, roles).Result;
+
+
+
+                // Make sure our SysAdmin role has all of the available claims
+                var role = db.Roles.FirstOrDefault(r => r.NormalizedName == "SYSADMIN");
+                //foreach (var claim in Piranha.Security.Permission.All())
+                foreach (var permission in App.Permissions.GetPermissions())
+                {
+                    var roleClaim = db.RoleClaims.FirstOrDefault(c =>
+                        c.RoleId == role.Id && c.ClaimType == permission.Name && c.ClaimValue == permission.Name);
+                    if (roleClaim == null)
+                    {
+                        db.RoleClaims.Add(new IdentityRoleClaim<string>
+                        {
+                            RoleId = role.Id,
+                            ClaimType = permission.Name,
+                            ClaimValue = permission.Name
+                        });
+                    }
+                }
+
+                db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "Error while data seeding");
             }
 
-            db.SaveChangesAsync();
         }
 
         public static async Task<IdentityResult> AssignRoles(UserManager<IdentityUser> userManager, string email, string[] roles)

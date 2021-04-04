@@ -15,6 +15,7 @@ using Piranha.Data.EF.SQLite;
 using Piranha.Manager.Editor;
 using Santafenhon.Web.Data;
 using Santafenhon.Web.Shared.Identity;
+using Santafenhon.Web.Shared.Middleware;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +94,8 @@ namespace Santafenhon.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseBrgyExceptionHandler();
 
             // Initialize Piranha
             App.Init(api);
