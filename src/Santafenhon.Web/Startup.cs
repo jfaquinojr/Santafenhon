@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,9 @@ using Piranha.Data.EF.SQLite;
 using Piranha.Manager.Editor;
 using Santafenhon.Web.Data;
 using Santafenhon.Web.Shared.Identity;
+using Santafenhon.Web.Shared.Infrastructure;
 using Santafenhon.Web.Shared.Middleware;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,6 +81,16 @@ namespace Santafenhon.Web
 #if DEBUG
             blder.AddRazorRuntimeCompilation();
 #endif
+
+
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                Log.Information("Facebook AppId value is {FacebookAppId}", Configuration["Authentication:Facebook:AppId"]);
+                facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+                facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                facebookOptions.AccessDeniedPath = "/Identity/Account/Login";
+            });
+            services.AddScoped<IEmailSender, BrgyEmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
