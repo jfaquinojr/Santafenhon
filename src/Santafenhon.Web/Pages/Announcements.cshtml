@@ -1,0 +1,28 @@
+﻿@page
+@model Santafenhon.Web.Pages.AnnouncementsModel
+@{
+    ViewData["Title"] = "Announcements";
+    var posts = await WebApp.Api.Posts.GetAllBySiteIdAsync(WebApp.Site.Id);
+    var news = posts.Where(p => p.Category.Title == "News");
+    var announcements = posts.Where(p => p.Category.Title == "Announcement");
+    var accomplishments = posts.Where(p => p.Category.Title == "Accomplishment");
+}
+
+
+<div class="container" id="appAnnouncments">
+    <h1>Announcements</h1>
+</div>
+
+
+
+@section Head {
+
+}
+
+
+@section Scripts {
+
+<script>
+    
+</script>
+}
