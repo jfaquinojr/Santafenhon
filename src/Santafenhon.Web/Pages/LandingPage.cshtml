@@ -1,7 +1,7 @@
 @page
 @model SinglePage<LandingPage>
 @{
-    ViewData["Title"] = !string.IsNullOrEmpty(Model.Data.MetaTitle) ? Model.Data.MetaTitle : Model.Data.Title;
+    ViewData["Title"] = !string.IsNullOrEmpty(Model.Data?.MetaTitle) ? Model.Data?.MetaTitle : Model.Data?.Title;
     var hasImage = Model.Data.PrimaryImage.HasValue;
     Layout = "_LandingLayout";
 }
@@ -325,6 +325,13 @@
 
 <main>
 
+    @{
+        var posts = await WebApp.Api.Posts.GetAllBySiteIdAsync(WebApp.Site.Id);
+        var news = posts.Where(p => p.Category.Title == "News");
+        var announcements = posts.Where(p => p.Category.Title == "Announcement");
+        var accomplishments = posts.Where(p => p.Category.Title == "Accomplishment");
+    }
+
     @*News and Announcements*@
     <section class="page-section bg-light" id="announcements">
         <div class="container">
@@ -334,35 +341,78 @@
             </div>
             <div class="row p-4 bg-white">
                 @*<div class="main-announcement p-4 text-white col-sm-12 col-md-8 col-lg-9 border-dark border" style="background-image:url('https://startbootstrap.github.io/startbootstrap-agency/assets/img/portfolio/01-thumbnail.jpg');background-size:cover;">*@
-                <div class="main-announcement p-4 col-sm-12 col-md-8 col-lg-9 pr-md-5 mb-sm-4">
-                    <div class="d-flex">
-                        <div>
-                            <h2>This is an announcement!</h2>
+                <div class="main-announcement p-md-4 p-sm-0 col-sm-12 col-md-8 col-lg-9 pr-md-5 mb-sm-4">
+                    @if (announcements.Count() > 0)
+                    {
+                        foreach (var announcement in announcements)
+                        {
+                            <div class="d-flex">
+                                <div>
+                                    <h2>@announcement.Title</h2>
+                                </div>
+                                <div class="flex-fill"></div>
+                                <span class="text-muted small">@(announcement.Published?.ToShortDateString())</span>
+                            </div>
+                            <div>
+                                <p>
+                                    @announcement.Excerpt
+                                </p>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="d-flex">
+                            <div>
+                                <h2>This is an announcement!</h2>
+                            </div>
+                            <div class="flex-fill"></div>
+                            <span class="text-muted small">@(DateTime.Now.ToString())</span>
                         </div>
-                        <div class="flex-fill"></div>
-                        <span class="text-muted small">@(DateTime.Now.ToString())</span>
-                    </div>
-                    <div>
-                        <p>
-                            Praesent id fringilla nisl, non rhoncus metus. Sed a euismod ipsum, vel faucibus urna. Praesent nec posuere sapien, a sollicitudin nunc. Donec sapien ipsum, semper vitae ante eu, rutrum luctus ipsum. Aliquam in ipsum dui. Mauris maximus bibendum fermentum. Vivamus ac laoreet justo, sit amet ultricies ex. Duis velit massa, scelerisque et massa id, gravida rutrum risus. Nullam vel volutpat metus, aliquam luctus nunc. Phasellus tincidunt placerat molestie. Quisque venenatis facilisis justo vel egestas. Integer id cursus eros. Nulla eget ullamcorper purus. Ut dignissim vulputate iaculis.
-                        </p>
-                    </div>
+                        <div>
+                            <p>
+                                Praesent id fringilla nisl, non rhoncus metus. Sed a euismod ipsum, vel faucibus urna. Praesent nec posuere sapien, a sollicitudin nunc. Donec sapien ipsum, semper vitae ante eu, rutrum luctus ipsum. Aliquam in ipsum dui. Mauris maximus bibendum fermentum. Vivamus ac laoreet justo, sit amet ultricies ex. Duis velit massa, scelerisque et massa id, gravida rutrum risus. Nullam vel volutpat metus, aliquam luctus nunc. Phasellus tincidunt placerat molestie. Quisque venenatis facilisis justo vel egestas. Integer id cursus eros. Nulla eget ullamcorper purus. Ut dignissim vulputate iaculis.
+                            </p>
+                        </div>
+                    }
                     <div>
                         <button class="btn btn-primary">See all announcements</button>
                     </div>
                 </div>
                 <div class="main-news col-sm-12 col-md-4 col-lg-3 pl-0 pr-0">
 
-                    @for (var i = 0; i < 3; i++)
+                    <div class="d-sm-block d-md-none mt-4 mb-3">
+                        <hr />
+                        <h4>News</h4>
+                    </div>
+
+                    @if (news.Count() > 0)
                     {
-                        <div class="py-1 px-2 news-item">
-                            <div class="h5">This is a news item heading sample @i.ToString()</div>
-                            <div class="d-flex">
-                                <span class="small text-muted">
-                                    @(DateTime.Now.ToShortDateString())
-                                </span>
+                        foreach (var newsitem in news)
+                        {
+                            <div class="py-1 px-2 news-item">
+                                <div class="h5">@newsitem.Title</div>
+                                <div class="d-flex">
+                                    <span class="small text-muted">
+                                        @(newsitem.Published?.ToShortDateString())
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        }
+                    }
+                    else
+                    {
+                        for (var i = 0; i < 3; i++)
+                        {
+                            <div class="py-1 px-2 news-item">
+                                <div class="h5">This is a news item heading sample @i.ToString()</div>
+                                <div class="d-flex">
+                                    <span class="small text-muted">
+                                        @(DateTime.Now.ToShortDateString())
+                                    </span>
+                                </div>
+                            </div>
+                        }
                     }
                     <button class="btn btn-sm btn-primary mt-2">
                         See all News

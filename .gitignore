@@ -341,3 +341,4 @@ healthchecksdb
 
 
 *.db
+/src/Santafenhon.Web/wwwroot/uploads
